@@ -6,7 +6,7 @@
 
 ## Overview
 
-Written in TypeScript and compiled to ES6 with inline source map & source. See [@selfage/tsconfig](https://www.npmjs.com/package/@selfage/tsconfig) for full compiler options. Provides environment-level API declarations, though rather primitive, for TS/JS code running by [@selfage/bundler_cli#run-in-puppeteer](https://github.com/selfage/bundler_cli/tree/main#run-in-puppeteer), i.e., in Puppeteer/browser environment. See all available [Puppeteer executor APIs](https://github.com/selfage/puppeteer_executor_api/blob/main/apis.ts) to access global variables and control browser behaviors that are normally prohibited due to security reasons.
+Written in TypeScript and compiled to ES6 with inline source map & source. See [@selfage/tsconfig](https://www.npmjs.com/package/@selfage/tsconfig) for full compiler options. Provides environment-level API declarations, though rather primitive, for TS/JS code running by [@selfage/bundler_cli#run-in-puppeteer](https://github.com/selfage/bundler_cli/tree/main#run-in-puppeteer), i.e., in Puppeteer/browser environment. See all available [Puppeteer executor APIs](https://github.com/selfage/puppeteer_executor_api/blob/main/apis.ts).
 
 ## Access argv
 
