@@ -1,0 +1,32 @@
+{
+  "name": "@selfage/puppeteer_executor_api",
+  "version": "0.0.1",
+  "description": "API definitions for Puppeteer executor from @selfage/bundler_cli.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/selfage/puppeteer_executor_api.git"
+  },
+  "keywords": [
+    "Environment",
+    "API",
+    "Puppeteer",
+    "Browser",
+    "TypeScript"
+  ],
+  "author": "Yuxuan Xie <teststaybaka@gmail.com> (http://www.yuxuanxie.com)",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/selfage/puppeteer_executor_api/issues"
+  },
+  "homepage": "https://github.com/selfage/puppeteer_executor_api#readme",
+  "main": "./apis.js",
+  "types": "./apis.d.ts",
+  "files": [
+    "**/*.d.ts",
+    "**/*.js"
+  ],
+  "devDependencies": {
+    "@selfage/tsconfig": "^1.0.6",
+    "typescript": "^4.1.3"
+  }
+}
