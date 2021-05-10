@@ -1,6 +1,6 @@
 {
   "name": "@selfage/puppeteer_executor_api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "API definitions for Puppeteer executor from @selfage/bundler_cli.",
   "repository": {
     "type": "git",
@@ -11,6 +11,8 @@
     "API",
     "Puppeteer",
     "Browser",
+    "Test",
+    "Development",
     "TypeScript"
   ],
   "author": "Yuxuan Xie <teststaybaka@gmail.com> (http://www.yuxuanxie.com)",
