@@ -10,7 +10,7 @@ Written in TypeScript and compiled to ES6 with inline source map & source. See [
 
 ## Access argv
 
-Pass-through arguments from `@selfage/bundler_cli` can be accessed in your executable TS/JS file via a global `argv` variable which is an array of strings similar to Nodejs's `process.argv` except no Node path and JS file name.
+Pass-through arguments can be accessed in your executable TS/JS file via a global `argv` variable which is an array of strings similar to Nodejs's `process.argv` except no Node path and JS file name.
 
 ```TypeScript
 import '@selfage/puppeteer_executor_api/argv'; // import for side effect which declares argv as a global variable.

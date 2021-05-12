@@ -1,16 +1,16 @@
 {
   "name": "@selfage/puppeteer_executor_api",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "API definitions for Puppeteer executor from @selfage/bundler_cli.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/selfage/puppeteer_executor_api.git"
   },
   "keywords": [
-    "Environment",
     "API",
-    "Puppeteer",
     "Browser",
+    "Puppeteer",
+    "Environment",
     "Test",
     "Development",
     "TypeScript"
