@@ -6,7 +6,7 @@
 
 ## Overview
 
-Written in TypeScript and compiled to ES6 with inline source map & source. See [@selfage/tsconfig](https://www.npmjs.com/package/@selfage/tsconfig) for full compiler options. Provides [Puppeteer executor environment](https://github.com/selfage/bundler_cli#puppeteer-executor-environment) API declarations, though rather primitive, for TS/JS code running by [@selfage/bundler_cli#run-in-puppeteer](https://github.com/selfage/bundler_cli#run-in-puppeteer).
+Written in TypeScript and compiled to ES6 with inline source map & source. See [@selfage/tsconfig](https://www.npmjs.com/package/@selfage/tsconfig) for full compiler options. Provides [Puppeteer executor environment](https://github.com/selfage/bundler_cli#puppeteer-executor-environment) API declarations.
 
 ## Access argv
 
@@ -21,17 +21,17 @@ parseArg(argv);
 // or parseArg(globalThis.argv);
 ```
 
-## Control API
+## Command APIs
 
-APIs are invoked by logging, i.e. `console.log()`, and thus verbose to avoid accidental conflicts. Those APIs can control browser behaviors and touch file systems, and thus are usually prohibited by browsers. However, `@selfage/bundler_cli` can listen to logging events and then execute them. They should be used for dev/test purposes only.
+Command APIs are verbose to avoid accidental conflicts when logging. 
 
 ```TypeScript
-import { EXIT, SCREENSHOT, DELETE } from '@selfage/puppeteer_executor_api';
+import { EXIT, SCREENSHOT, DELETE } from '@selfage/puppeteer_executor_api/cmds';
 
 console.log(EXIT);
 console.log(SCREENSHOT + '/golden/test_image.png');
 console.log(DELETE + '/golden/test_image.png');
 ```
 
-Also see [api.ts](https://github.com/selfage/puppeteer_executor_api/blob/main/apis.ts). You can find a working example in [@selfage/test_runner](https://github.com/selfage/test_runner).
+Also see [cmds.ts](https://github.com/selfage/puppeteer_executor_api/blob/main/cmds.ts). You can find a working example in [@selfage/test_runner](https://github.com/selfage/test_runner).
 

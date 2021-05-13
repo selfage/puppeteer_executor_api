@@ -1,5 +1,5 @@
 // Exits when you think all things are done. Browser/Puppeteer environment will
-// not exit by itself because it still waits for user interactions.
+// not exit by itself because it keeps waiting for user interactions.
 export let EXIT = "eeexisttt!";
 // Followed by a url path which is treated as a relative file path to the root
 // directory, and writes the screenshot to the file path. Note that there is

@@ -21,8 +21,6 @@
     "url": "https://github.com/selfage/puppeteer_executor_api/issues"
   },
   "homepage": "https://github.com/selfage/puppeteer_executor_api#readme",
-  "main": "./apis.js",
-  "types": "./apis.d.ts",
   "files": [
     "**/*.d.ts",
     "**/*.js"
