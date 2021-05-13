@@ -1,6 +1,6 @@
 {
   "name": "@selfage/puppeteer_executor_api",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "API definitions for Puppeteer executor from @selfage/bundler_cli.",
   "repository": {
     "type": "git",
