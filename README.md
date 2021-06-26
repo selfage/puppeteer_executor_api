@@ -29,8 +29,8 @@ Command APIs are verbose to avoid accidental conflicts when logging.
 import { EXIT, SCREENSHOT, DELETE } from '@selfage/puppeteer_executor_api/cmds';
 
 console.log(EXIT);
-console.log(SCREENSHOT + '/golden/test_image.png');
-console.log(DELETE + '/golden/test_image.png');
+console.log(SCREENSHOT, '/golden/test_image.png');
+console.log(DELETE, '/golden/test_image.png');
 ```
 
 Also see [cmds.ts](https://github.com/selfage/puppeteer_executor_api/blob/main/cmds.ts). You can find a working example in [@selfage/test_runner](https://github.com/selfage/test_runner).

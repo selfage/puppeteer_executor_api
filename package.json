@@ -1,6 +1,6 @@
 {
   "name": "@selfage/puppeteer_executor_api",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "API definitions for Puppeteer executor from @selfage/bundler_cli.",
   "repository": {
     "type": "git",
@@ -21,6 +21,8 @@
     "url": "https://github.com/selfage/puppeteer_executor_api/issues"
   },
   "homepage": "https://github.com/selfage/puppeteer_executor_api#readme",
+  "main": "./apis.js",
+  "types": "./apis.d.ts",
   "files": [
     "**/*.d.ts",
     "**/*.js"
@@ -28,5 +30,8 @@
   "devDependencies": {
     "@selfage/tsconfig": "^1.0.6",
     "typescript": "^4.1.3"
+  },
+  "dependencies": {
+    "@types/node": "^15.12.4"
   }
 }
