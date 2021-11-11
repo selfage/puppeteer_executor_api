@@ -6,5 +6,9 @@ declare function screenshot(
 ): Promise<string>;
 declare function fileExists(relativePath: string): Promise<void>;
 declare function readFile(relativePath: string): Promise<string>;
+declare function writeFile(
+  relativePath: string,
+  data: ArrayBuffer
+): Promise<void>;
 declare function deleteFile(relativePath: string): Promise<void>;
 declare function setViewport(width: number, height: number): Promise<void>;
