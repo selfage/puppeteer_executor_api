@@ -1,27 +1,31 @@
 {
-  "name": "@selfage/puppeteer_test_launcher",
+  "name": "@selfage/puppeteer_test_executor",
   "version": "1.0.0",
   "description": "Execute bundled JS file with extra global functions exposed by Puppeteer",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/selfage/puppeteer_test_launcher.git"
+    "url": "git+https://github.com/selfage/puppeteer_test_executor.git"
   },
   "keywords": [
+    "Global",
+    "Window",
     "Browser",
     "Puppeteer",
+    "Context",
     "Environment",
     "Test",
+    "Testing",
     "Development",
-    "Exector",
+    "Executor",
     "Launcher",
     "TypeScript"
   ],
   "author": "Yuxuan Xie <teststaybaka@gmail.com> (http://www.yuxuanxie.com)",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/selfage/puppeteer_test_launcher/issues"
+    "url": "https://github.com/selfage/puppeteer_test_executor/issues"
   },
-  "homepage": "https://github.com/selfage/puppeteer_test_launcher#readme",
+  "homepage": "https://github.com/selfage/puppeteer_test_executor#readme",
   "main": "./executor.js",
   "types": "./executor.d.ts",
   "files": [

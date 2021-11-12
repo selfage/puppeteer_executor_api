@@ -17,16 +17,16 @@ export interface OutputCollection {
   other: Array<string>;
 }
 
-export async function executeInPuppeteer(
+export async function execute(
   binFile: string,
   baseDir = ".",
   outputToConsole = true,
   port = 8000,
-  args: Array<string> = []
+  argv: Array<string> = []
 ): Promise<OutputCollection> {
   let binJsFile = path.relative(baseDir, binFile);
   let tempBinFile = path.join(baseDir, "selfage_temp_bin.html");
-  let argsStr = args.length === 0 ? `` : `"${args.join(`","`)}"`;
+  let argsStr = argv.length === 0 ? `` : `"${argv.join(`","`)}"`;
   let writeFilePromise = fs.promises.writeFile(
     tempBinFile,
     `<html>
