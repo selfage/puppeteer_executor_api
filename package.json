@@ -31,9 +31,12 @@
   "devDependencies": {
     "@selfage/cli": "^2.3.2",
     "@selfage/tsconfig": "^1.0.7",
+    "@types/mime-types": "^2.1.1",
+    "@types/node": "^16.11.7",
     "typescript": "^4.1.3"
   },
   "dependencies": {
+    "mime-types": "^2.1.34",
     "puppeteer": "^11.0.0"
   }
 }
