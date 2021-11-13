@@ -36,7 +36,7 @@ The full JS file path in the example is `./base/dir/file/to/be/run/in/browser.js
 
 ## JS file in browser context
 
-The JS file executed by the way above has access to several more global/window variables & functions. Below is the full list copied from [apis.ts](https://github.com/selfage/puppeteer_test_executor/blob/main/apis.ts).
+The JS file executed by the way above has access to several more global/window variables & functions. Below is the full list copied from [apis.ts](https://github.com/selfage/puppeteer_test_executor_api/blob/main/apis.ts) which can be imported after installing `@selfage/puppeteer_test_executor_api`.
 
 ```TypeScript
 declare var argv: Array<string>;
@@ -63,7 +63,7 @@ declare function setViewport(width: number, height: number): Promise<void>;
 ### Argv
 
 ```TypeScript
-import '@selfage/puppeteer_test_executor/apis'; // Import type definitions only.
+import '@selfage/puppeteer_test_executor_api'; // Import type definitions only.
 
 parseArg(argv); // ['--case', 'AssertAddition']
 // or parseArg(globalThis.argv);
@@ -74,7 +74,7 @@ If you have executed the JS file with an `argv` argument, the value, which is of
 ### Functions
 
 ```TypeScript
-import '@selfage/puppeteer_test_executor/apis'; // Import type definitions only.
+import '@selfage/puppeteer_test_executor_api'; // Import type definitions only.
 
 // Runs in browser context.
 async function main(): Promise<void> {
@@ -85,4 +85,4 @@ async function main(): Promise<void> {
 
 Functions made available this way are more powerful than regular functions because they are actually run in Node context, as opposed to browser context, thanks to the magic [exposeFunction()](https://github.com/puppeteer/puppeteer/blob/v11.0.0/docs/api.md#pageexposefunctionname-puppeteerfunction). I.e. you can interact with file systems within browser context directly, as well as changing view port and taking screenshots.
 
-`exit()` is a special and important function. It tells the browser page which runs the JS file to close itself. Normally a browser page won't close/exit at all even if everything has been executed, because it's waiting for user to interact with the page. But in testing scenarios, the JS file itself often controls all interactions and knows when to end tests. `exit()` can then be called upon all tests finished, which in turn resolves `execute()` function.
+`exit()` is a special and important function. It tells the browser page which runs the JS file to close itself. Normally a browser page won't close/exit at all even if everything has been executed, because it's waiting for user to interact with the page. But in testing scenarios, the JS file itself often controls all interactions and knows when to end tests. `exit()` can then be called upon all tests finished, which in turn resolves `execute()` function. You can see [@selfage/test_runner](https://github.com/selfage/test_runner) as an example.

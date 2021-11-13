@@ -1,6 +1,6 @@
 {
   "name": "@selfage/puppeteer_test_executor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Execute bundled JS file with extra global functions exposed by Puppeteer",
   "repository": {
     "type": "git",
