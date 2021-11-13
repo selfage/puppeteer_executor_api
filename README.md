@@ -12,13 +12,31 @@ Written in TypeScript and compiled to ES6 with inline source map & source. See [
 
 ## Executing a JS file
 
+You can use the CLI e.g. `$ npx pexe file/to/be/run/in/browser.js -b base/dir`. See below for detailed options.
+
+```Shell
+$ npx pexe -h
+Usage: pexe [options] <binFile> [pass-through-args...]
+
+Execute the presumably bundled JavaScript file in browser context. The file ext can be neglected and is always fixed as .js. "--" is needed in between <binFile> and pass through arguments.
+
+Options:
+  -b, --base-dir <baseDir>  The base directory that all loaded files/resources should be relative to, from which all static files are being served in the server. If not
+                            provided, it will be the current working directory.
+  -p, --port <port>         The port number to start your local server. Default to 8000.
+  -l, --outputToConsole     Whether to log logs in browser to console.
+  -h, --help                display help for command
+```
+
+Or use programmatical API as below.
+
 ```TypeScript
 import { execute, OutputCollection } from '@selfage/puppeteer_test_executor';
 
 // Runs in Node context.
 let outputCollection: OutputCollection = execute(
-  './file/to/be/run/in/browser.js',
-  './base/dir',
+  'file/to/be/run/in/browser.js',
+  'base/dir',
   /* outputToConsole= */ true,
   /* port= */ 8080,
   /* argv= */ ['--case', 'AssertAddition']);
@@ -30,9 +48,11 @@ outputCollection.other; // Array<string>
 
 As a prerequisite, you need a JS file that's meant to be run in browser context, which contains everything needed to render a page/perform whatever actions. It can be a bundled file using bundlers such as `browserify`, or a bootstrap file that loads other files.
 
-The `execute()` function will start a local Node server, embed the JS file into a temporary HTML file, and launch Puppeteer to navigate to that HTML file. When `outputToConsole` is `true`, it logs browser logs to Node console. Returned `outputCollection` will always collect all logs from the browser. Note that, normally a browser page won't exit by itself even if everything have been executed, so `execute()` will never resolve/return. The solution is to call `exit()` from the JS file. Keep reading.
+The `execute()` function or the CLI will start a local Node server, embed the JS file into a temporary HTML file, and launch Puppeteer to navigate to that HTML file. When `outputToConsole` is `true`, it logs browser logs to Node console. Returned `outputCollection` will always collect all logs from the browser. `pass-through-args` or `argv` argument are made available to the JS file as a global variable.
 
-The full JS file path in the example is `./base/dir/file/to/be/run/in/browser.js` which is split into two parts: a base directory and a relative path. You might just want to use `'.'` as the base directory. However the base directory is also used to be prepended to all paths loaded in the JS file. E.g. if the JS file loads an image with `src='/path/to/image.jpg'`, the server will try to find the file at `./base/dir/path/to/image.jpg`. You need to make sure all other files loaded share the same base directory with the JS file, and only reference the part of file paths after the base directory.
+The full JS file path in the example is `./base/dir/file/to/be/run/in/browser.js` which is split into two parts: a base directory and a relative path. You might just want to use `'.'`, which is the default, as the base directory. However the base directory is where all static files are being served from. E.g. if the JS file loads an image with `src='/path/to/image.jpg'`, the server will try to find it at `./base/dir/path/to/image.jpg`.
+
+Note that, normally a browser page won't exit by itself even if everything have been executed, so `execute()` or the CLI will never resolve/return. The solution is to call `exit()` from the JS file.
 
 ## JS file in browser context
 
@@ -69,7 +89,7 @@ parseArg(argv); // ['--case', 'AssertAddition']
 // or parseArg(globalThis.argv);
 ```
 
-If you have executed the JS file with an `argv` argument, the value, which is of `Array<string>`, can then be accessed in the JS file by `argv`, i.e. it's a global/window scope variable. It's intended to be used just as command line arguments as if it's an exetuable JS file used in CLIs.
+If you have executed the JS file with an `argv` argument, the value, which is of `Array<string>`, can then be accessed in the JS file by `argv`, i.e. it's a global/window scope variable. It's intended to be used just as command line arguments as if it's an exetuable JS file used in Node CLIs.
 
 ### Functions
 

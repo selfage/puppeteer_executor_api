@@ -24,7 +24,10 @@ export async function execute(
   port = 8000,
   argv: Array<string> = []
 ): Promise<OutputCollection> {
-  let binJsFile = path.relative(baseDir, binFile);
+  let pathObj = path.parse(binFile);
+  pathObj.ext = ".js";
+  pathObj.base = "";
+  let binJsFile = path.relative(baseDir, path.format(pathObj));
   let tempBinFile = path.join(baseDir, "selfage_temp_bin.html");
   let argsStr = argv.length === 0 ? `` : `"${argv.join(`","`)}"`;
   let writeFilePromise = fs.promises.writeFile(
