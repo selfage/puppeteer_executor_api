@@ -103,6 +103,6 @@ async function main(): Promise<void> {
 }
 ```
 
-Functions made available this way are more powerful than regular functions because they are actually run in Node context, as opposed to browser context, thanks to the magic [exposeFunction()](https://github.com/puppeteer/puppeteer/blob/v11.0.0/docs/api.md#pageexposefunctionname-puppeteerfunction). I.e. you can interact with file systems within browser context directly, as well as changing view port and taking screenshots.
+Functions made available this way are more powerful than regular functions because they are actually run in Node context, as opposed to browser context, thanks to the magic [exposeFunction()](https://github.com/puppeteer/puppeteer/blob/v11.0.0/docs/api.md#pageexposefunctionname-puppeteerfunction). I.e. you can interact with file systems within browser context directly, and even control browser behaviors.
 
 `exit()` is a special and important function. It tells the browser page which runs the JS file to close itself. Normally a browser page won't close/exit at all even if everything has been executed, because it's waiting for user to interact with the page. But in testing scenarios, the JS file itself often controls all interactions and knows when to end tests. `exit()` can then be called upon all tests finished, which in turn resolves `execute()` function. You can see [@selfage/test_runner](https://github.com/selfage/test_runner) as an example.
