@@ -57,14 +57,18 @@ export async function execute(
     "screenshot",
     async (
       relativePath: string,
-      options: {
+      {
+        delay = 0,
+        fullPage,
+        quality,
+      }: {
         delay?: number; // ms
         fullPage?: boolean;
         quality?: number;
-      }
+      } = {}
     ): Promise<void> => {
       await new Promise<void>((resolve) => {
-        setTimeout(resolve, options.delay ?? 0);
+        setTimeout(resolve, delay);
       });
       let file = path.join(baseDir, relativePath);
       let fileType: "png" | "jpeg";
@@ -76,8 +80,8 @@ export async function execute(
       await page.screenshot({
         path: file,
         type: fileType,
-        quality: options.quality,
-        fullPage: options.fullPage,
+        quality: quality,
+        fullPage: fullPage,
         omitBackground: true,
       });
     }
