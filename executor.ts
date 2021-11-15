@@ -100,23 +100,16 @@ export async function execute(
   );
   page.exposeFunction(
     "readFile",
-    async (
-      relativePath: string,
-      encoding?: BufferEncoding
-    ): Promise<string | ArrayBuffer> => {
+    async (relativePath: string, encoding: BufferEncoding): Promise<string> => {
       let file = path.join(baseDir, relativePath);
-      if (!encoding) {
-        return (await fs.promises.readFile(file)).buffer;
-      } else {
-        return await fs.promises.readFile(file, encoding);
-      }
+      return await fs.promises.readFile(file, encoding);
     }
   );
   page.exposeFunction(
     "writeFile",
-    async (relativePath: string, data: ArrayBuffer): Promise<void> => {
+    async (relativePath: string, data: string): Promise<void> => {
       let file = path.join(baseDir, relativePath);
-      return await fs.promises.writeFile(file, Buffer.from(data));
+      return await fs.promises.writeFile(file, Buffer.from(data, "binary"));
     }
   );
   page.exposeFunction(
