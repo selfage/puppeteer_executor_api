@@ -126,6 +126,24 @@ export async function execute(
     }
   );
 
+  await page.setRequestInterception(true);
+  page.on("request", (interceptedRequest): void => {
+    interceptedRequest.continue(
+      interceptedRequest.continueRequestOverrides(),
+      0
+    );
+  });
+  page.exposeFunction(
+    "mockExactUrl",
+    (orignialUrl: string, replacedUrl: string): void => {
+      page.on("request", (interceptedRequest) => {
+        if (interceptedRequest.url() === orignialUrl) {
+          interceptedRequest.continue({ url: replacedUrl }, 1);
+        }
+      });
+    }
+  );
+
   let outputCollection: OutputCollection = {
     log: [],
     warn: [],

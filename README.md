@@ -79,6 +79,7 @@ declare function writeFile(
 ): Promise<void>;
 declare function deleteFile(relativePath: string): Promise<void>;
 declare function setViewport(width: number, height: number): Promise<void>;
+declare function mockExactUrl(orignialUrl: string, replacedUrl: string): void;
 ```
 
 ### Argv
