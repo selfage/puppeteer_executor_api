@@ -127,18 +127,18 @@ export async function execute(
   );
 
   await page.setRequestInterception(true);
-  page.on("request", (interceptedRequest): void => {
-    interceptedRequest.continue(
-      interceptedRequest.continueRequestOverrides(),
-      0
-    );
+  page.on("request", (request): void => {
+    request.continue(request.continueRequestOverrides(), 0);
   });
   page.exposeFunction(
-    "mockExactUrl",
-    (orignialUrl: string, replacedUrl: string): void => {
-      page.on("request", (interceptedRequest) => {
-        if (interceptedRequest.url() === orignialUrl) {
-          interceptedRequest.continue({ url: replacedUrl }, 1);
+    "mockExactFile",
+    (originalUrl: string, relativePath: string): void => {
+      page.on("request", (request) => {
+        if (request.url() === originalUrl) {
+          request.continue(
+            { url: `http://${HOST_NAME}:${port}${relativePath}` },
+            1
+          );
         }
       });
     }
