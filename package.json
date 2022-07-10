@@ -36,7 +36,7 @@
     "**/*.js"
   ],
   "devDependencies": {
-    "@selfage/cli": "^2.3.2",
+    "@selfage/cli": "^4.0.0",
     "@selfage/tsconfig": "^1.0.7",
     "@types/mime-types": "^2.1.1",
     "@types/node": "^16.11.7",
