@@ -8,6 +8,7 @@ import util = require("util");
 import { Buffer } from "buffer";
 let pipeline = util.promisify(stream.pipeline);
 
+let PUPPETEER_NAMESPACE = "puppeteer";
 let HOST_NAME = "localhost";
 
 export interface OutputCollection {
@@ -34,7 +35,7 @@ export async function execute(
     tempBinFile,
     `<html>
   <body>
-    <script type="text/javascript">var argv = [${argsStr}];</script>
+    <script type="text/javascript">var ${PUPPETEER_NAMESPACE}Argv = [${argsStr}];</script>
     <script type="text/javascript" src="/${binJsFile}"></script>
   </body>
 </html>`
@@ -54,7 +55,7 @@ export async function execute(
   let browser = await puppeteer.launch();
   let page = await browser.newPage();
   page.exposeFunction(
-    "screenshot",
+    `${PUPPETEER_NAMESPACE}Screenshot`,
     async (
       relativePath: string,
       {
@@ -87,7 +88,7 @@ export async function execute(
     }
   );
   page.exposeFunction(
-    "fileExists",
+    `${PUPPETEER_NAMESPACE}FileExists`,
     async (relativePath: string): Promise<boolean> => {
       let file = path.join(baseDir, relativePath);
       try {
@@ -99,50 +100,67 @@ export async function execute(
     }
   );
   page.exposeFunction(
-    "readFile",
+    `${PUPPETEER_NAMESPACE}ReadFile`,
     async (relativePath: string, encoding: BufferEncoding): Promise<string> => {
       let file = path.join(baseDir, relativePath);
       return await fs.promises.readFile(file, encoding);
     }
   );
   page.exposeFunction(
-    "writeFile",
+    `${PUPPETEER_NAMESPACE}WriteFile`,
     async (relativePath: string, data: string): Promise<void> => {
       let file = path.join(baseDir, relativePath);
       return await fs.promises.writeFile(file, Buffer.from(data, "binary"));
     }
   );
   page.exposeFunction(
-    "deleteFile",
+    `${PUPPETEER_NAMESPACE}DeleteFile`,
     async (relativePath: string): Promise<void> => {
       let file = path.join(baseDir, relativePath);
       await fs.promises.unlink(file);
     }
   );
   page.exposeFunction(
-    "setViewport",
+    `${PUPPETEER_NAMESPACE}SetViewport`,
     async (width: number, height: number): Promise<void> => {
       await page.setViewport({ width, height });
     }
   );
-
-  await page.setRequestInterception(true);
-  page.on("request", (request): void => {
-    request.continue(request.continueRequestOverrides(), 0);
-  });
-  page.exposeFunction(
-    "mockExactFile",
-    (originalUrl: string, relativePath: string): void => {
-      page.on("request", (request) => {
-        if (request.url() === originalUrl) {
-          request.continue(
-            { url: `http://${HOST_NAME}:${port}${relativePath}` },
-            1
-          );
-        }
-      });
-    }
-  );
+  {
+    await page.setRequestInterception(true);
+    page.on("request", (request): void => {
+      request.continue(request.continueRequestOverrides(), 0);
+    });
+    page.exposeFunction(
+      `${PUPPETEER_NAMESPACE}MockExactFile`,
+      (originalUrl: string, relativePath: string): void => {
+        page.on("request", (request) => {
+          if (request.url() === originalUrl) {
+            request.continue(
+              { url: `http://${HOST_NAME}:${port}${relativePath}` },
+              1
+            );
+          }
+        });
+      }
+    );
+  }
+  {
+    let fileChooserPromise: Promise<puppeteer.FileChooser>;
+    page.exposeFunction(
+      `${PUPPETEER_NAMESPACE}WaitForFileChooser`,
+      (): void => {
+        fileChooserPromise = page.waitForFileChooser();
+      }
+    );
+    page.exposeFunction(
+      `${PUPPETEER_NAMESPACE}FileChooserAccept`,
+      async (relativePaths: Array<string>): Promise<void> => {
+        let fileChooser = await fileChooserPromise;
+        await fileChooser.accept(relativePaths);
+      }
+    );
+  }
 
   let outputCollection: OutputCollection = {
     log: [],
@@ -151,26 +169,27 @@ export async function execute(
     other: [],
   };
   let exited = false;
+  let lastConsoleMsgPromise = Promise.resolve();
   let exitCodePromise = new Promise<number>((resolve) => {
-    page.exposeFunction("exit", (): void => {
+    page.exposeFunction(`${PUPPETEER_NAMESPACE}Exit`, (): void => {
       exited = true;
       resolve(0);
     });
     page.on("pageerror", async (err) => {
+      exited = true;
+      resolve(2);
+      await lastConsoleMsgPromise;
       if (outputToConsole) {
         console.error(err.message);
       }
       outputCollection.error.push(err.message);
-      exited = true;
-      resolve(2);
     });
   });
-  let lastConsoleMsgPromise = Promise.resolve();
   page.on("console", (msg) => {
     if (exited) {
       return;
     }
-    lastConsoleMsgPromise = collectConsoleMsgAfterLastCollect(
+    lastConsoleMsgPromise = collectConsoleMsgAfterLastMsg(
       lastConsoleMsgPromise,
       msg,
       outputToConsole,
@@ -216,7 +235,7 @@ async function serveFile(
   return pipeline(fs.createReadStream(file), response);
 }
 
-async function collectConsoleMsgAfterLastCollect(
+async function collectConsoleMsgAfterLastMsg(
   lastCollectPromise: Promise<void>,
   msg: puppeteer.ConsoleMessage,
   outputToConsole: boolean,
@@ -251,12 +270,12 @@ async function interpretMsg(msg: puppeteer.ConsoleMessage): Promise<string> {
   if (msg.args().length > 0) {
     let args = (await Promise.all(
       msg.args().map((arg) => {
-        return arg.executionContext().evaluate((arg: any) => {
+        return arg.evaluate((arg: any) => {
           if (arg instanceof Error) {
             return arg.stack;
           }
           return `${arg}`;
-        }, arg);
+        });
       })
     )) as Array<string>;
     return util.format(...args);

@@ -5,7 +5,8 @@ import { Command } from "commander";
 function main(): void {
   let program = new Command();
   program
-    .argument("<binFile> [pass-through-args...]")
+    .argument("<binFile>")
+    .argument("[pass-through-args...]")
     .description(
       `Execute the presumably bundled JavaScript file in browser context. ` +
         `The file ext can be neglected and is always fixed as .js. "--" is ` +
