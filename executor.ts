@@ -149,13 +149,16 @@ export async function execute(
     let fileChooserPromise: Promise<puppeteer.FileChooser>;
     page.exposeFunction(
       `${PUPPETEER_NAMESPACE}WaitForFileChooser`,
-      (): void => {
+      async (delayAfter = 500 /* ms */): Promise<void> => {
         fileChooserPromise = page.waitForFileChooser();
+        await new Promise<void>((resolve) => {
+          setTimeout(resolve, delayAfter);
+        });
       }
     );
     page.exposeFunction(
       `${PUPPETEER_NAMESPACE}FileChooserAccept`,
-      async (relativePaths: Array<string>): Promise<void> => {
+      async (...relativePaths: Array<string>): Promise<void> => {
         let fileChooser = await fileChooserPromise;
         await fileChooser.accept(relativePaths);
       }

@@ -1,6 +1,6 @@
 {
   "name": "@selfage/puppeteer_test_executor",
-  "version": "3.0.2",
+  "version": "3.0.4",
   "description": "Execute bundled JS file with extra global functions exposed by Puppeteer",
   "repository": {
     "type": "git",
@@ -34,10 +34,13 @@
   "files": [
     "**/*.d.ts",
     "**/*.js",
-    "!**/*_example.*"
+    "!test_data/**/*",
+    "!**/*_test.*"
   ],
   "devDependencies": {
     "@selfage/cli": "^4.0.0",
+    "@selfage/test_matcher": "^1.1.2",
+    "@selfage/test_runner": "^4.0.0",
     "@selfage/tsconfig": "^1.0.7",
     "@types/mime-types": "^2.1.1",
     "@types/node": "^16.11.7",
