@@ -160,9 +160,11 @@ export async function execute(
       `${PUPPETEER_NAMESPACE}FileChooserAccept`,
       async (...relativePaths: Array<string>): Promise<void> => {
         let fileChooser = await fileChooserPromise;
-        await fileChooser.accept(relativePaths.map((relativePath): string => {
-          return path.join(baseDir, relativePath);
-        }));
+        await fileChooser.accept(
+          relativePaths.map((relativePath): string => {
+            return path.join(baseDir, relativePath);
+          })
+        );
       }
     );
   }
