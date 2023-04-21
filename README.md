@@ -56,7 +56,7 @@ Note that, normally a browser page won't exit by itself even if everything have 
 
 ## JS file in browser context
 
-The JS file executed by the way above has access to several more global/window variables & functions. Below is the full list copied from [apis.ts](https://github.com/selfage/puppeteer_test_executor_api/blob/main/apis.ts) which can be imported after installing `@selfage/puppeteer_test_executor_api`.
+The JS file executed by the way above has access to several more global/window variables & functions. Below is the full list of function declarations in TypeScript, copied from [apis.ts](https://github.com/selfage/puppeteer_test_executor/blob/main/apis.ts).
 
 ```TypeScript
 declare var puppeteerArgv: Array<string>;
@@ -92,10 +92,12 @@ declare function puppeteerFileChooserAccept(
 ): Promise<void>;
 ```
 
+To fix type errors in TypeScript, simply do `import "@selfage/puppeteer_test_executor/api";`.
+
 ### Argv
 
 ```TypeScript
-import '@selfage/puppeteer_test_executor_api'; // Import type definitions only.
+import '@selfage/puppeteer_test_executor/api'; // Import type definitions only.
 
 // Runs in browser context.
 parseArg(puppeteerArgv); // ['--case', 'AssertAddition']
@@ -107,7 +109,7 @@ If you have executed the JS file with an `argv` argument, the value, which is of
 ### Functions
 
 ```TypeScript
-import '@selfage/puppeteer_test_executor_api'; // Import type definitions only.
+import '@selfage/puppeteer_test_executor/api'; // Import type definitions only.
 
 // Runs in browser context.
 async function main(): Promise<void> {

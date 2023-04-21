@@ -5,6 +5,11 @@ import { spawnSync } from "child_process";
 
 TEST_RUNNER.run({
   name: "MainTest",
+  environment: {
+    setUp: () => {
+      spawnSync("selfage", ["cpl", "main"]);
+    },
+  },
   cases: [
     {
       name: "LogsAndErrors",
