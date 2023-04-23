@@ -56,68 +56,30 @@ Note that, normally a browser page won't exit by itself even if everything have 
 
 ## JS file in browser context
 
-The JS file executed by the way above has access to several more global/window variables & functions. Below is the full list of function declarations in TypeScript, copied from [apis.ts](https://github.com/selfage/puppeteer_test_executor/blob/main/apis.ts).
+The JS file executed by the way above runs in browser context, i.e. having access to `window` and DOM tree.
+
+### Helper functions
+
+A set of helper functions are provided to global/`window` thanks to the magic [exposeFunction()](https://github.com/puppeteer/puppeteer/blob/v11.0.0/docs/api.md#pageexposefunctionname-puppeteerfunction). They are able to interact with browser itself and access files directly from file system.
+
+E.g., normally a browser page won't close/exit at all even if everything has been executed, because it's waiting for user to interact with the page. However, if you are running tests, and want to close the browser after all tests are done. You can call the `exit()` function like below.
 
 ```TypeScript
-declare var puppeteerArgv: Array<string>;
-declare function puppeteerExit(): void;
-declare function puppeteerScreenshot(
-  relativePath: string,
-  options?: { delay?: number; fullPage?: boolean; quality?: number }
-): Promise<void>;
-declare function puppeteerFileExists(relativePath: string): Promise<boolean>;
-declare function puppeteerReadFile(
-  relativePath: string,
-  // An encoding is mandatory because raw buffer data cannot be transmitted
-  // correctly. Refer to BufferEncoding for all supported strings.
-  encoding: string
-): Promise<string>;
-declare function puppeteerWriteFile(
-  relativePath: string,
-  // Represented as a binary string.
-  data: string
-): Promise<void>;
-declare function puppeteerDeleteFile(relativePath: string): Promise<void>;
-declare function puppeteerSetViewport(
-  width: number,
-  height: number
-): Promise<void>;
-declare function puppeteerMockExactFile(
-  originalUrl: string,
-  relativePath: string
-): void;
-declare function puppeteerWaitForFileChooser(): void;
-declare function puppeteerFileChooserAccept(
-  relativePaths: Array<string>
-): Promise<void>;
+import { exit } from "@selfage/puppeteer_test_executor/helper";
+
+// ... other stuff to do
+exit(); // The browser is now being exited/closed.
+
 ```
 
-To fix type errors in TypeScript, simply do `import "@selfage/puppeteer_test_executor/api";`.
+See [helper.ts](https://github.com/selfage/puppeteer_test_executor/blob/main/helper.ts) for all available functions.
 
 ### Argv
 
 ```TypeScript
-import '@selfage/puppeteer_test_executor/api'; // Import type definitions only.
+import { getArgv } '@selfage/puppeteer_test_executor/helper'; // Import type definitions only.
 
-// Runs in browser context.
-parseArg(puppeteerArgv); // ['--case', 'AssertAddition']
-// or parseArg(globalThis.puppeteerArgv);
+console.log(getArgv()); // ['--case', 'AssertAddition']
 ```
 
-If you have executed the JS file with an `argv` argument, the value, which is of `Array<string>`, can then be accessed in the JS file by `argv`, i.e. it's a global/window scope variable. It's intended to be used just as command line arguments as if it's an exetuable JS file used in Node CLIs.
-
-### Functions
-
-```TypeScript
-import '@selfage/puppeteer_test_executor/api'; // Import type definitions only.
-
-// Runs in browser context.
-async function main(): Promise<void> {
-  await puppeteerFileExists('some/file.txt');
-  exit();
-}
-```
-
-Functions made available this way are more powerful than regular functions because they are actually run in Node context, as opposed to browser context, thanks to the magic [exposeFunction()](https://github.com/puppeteer/puppeteer/blob/v11.0.0/docs/api.md#pageexposefunctionname-puppeteerfunction). I.e. you can interact with file systems within browser context directly, and even control browser behaviors.
-
-`puppeteerExit()` is a special and important function. It tells the browser page which runs the JS file to close itself. Normally a browser page won't close/exit at all even if everything has been executed, because it's waiting for user to interact with the page. But in testing scenarios, the JS file itself often controls all interactions and knows when to end tests. `puppeteerExit()` can then be called upon all tests finished, which in turn resolves `execute()` function. You can see [@selfage/test_runner](https://github.com/selfage/test_runner) as an example.
+If you have executed the JS file with an `argv` argument or `[pass-through-args...]`, the value, which is of type `Array<string>`, can then be accessed in the JS file by `getArgv()`. It's intended to be used just as command line arguments as if it's an exetuable JS file used in Node CLIs.
