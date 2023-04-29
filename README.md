@@ -60,24 +60,24 @@ The JS file executed by the way above runs in browser context, i.e. having acces
 
 ### Helper functions
 
-A set of helper functions are provided to global/`window` thanks to the magic [exposeFunction()](https://github.com/puppeteer/puppeteer/blob/v11.0.0/docs/api.md#pageexposefunctionname-puppeteerfunction). They are able to interact with browser itself and access files directly from file system.
+A set of helper functions are provided to global/`window` thanks to the magic [exposeFunction()](https://github.com/puppeteer/puppeteer/blob/v11.0.0/docs/api.md#pageexposefunctionname-puppeteerfunction). They are able to interact with browser itself and access files directly from file system. Install `@selfage/puppeteer_test_executor_api` for quick access to those functions.
 
 E.g., normally a browser page won't close/exit at all even if everything has been executed, because it's waiting for user to interact with the page. However, if you are running tests, and want to close the browser after all tests are done. You can call the `exit()` function like below.
 
 ```TypeScript
-import { exit } from "@selfage/puppeteer_test_executor/helper";
+import { exit } from "@selfage/puppeteer_test_executor_api";
 
 // ... other stuff to do
 exit(); // The browser is now being exited/closed.
 
 ```
 
-See [helper.ts](https://github.com/selfage/puppeteer_test_executor/blob/main/helper.ts) for all available functions.
+See [apis.ts](https://github.com/selfage/puppeteer_test_executor_api/blob/main/apis.ts) for all available functions.
 
 ### Argv
 
 ```TypeScript
-import { getArgv } '@selfage/puppeteer_test_executor/helper'; // Import type definitions only.
+import { getArgv } '@selfage/puppeteer_test_executor_api';
 
 console.log(getArgv()); // ['--case', 'AssertAddition']
 ```
