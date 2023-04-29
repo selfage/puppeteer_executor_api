@@ -40,19 +40,30 @@ export function deleteFile(relativePath: string): Promise<void> {
   return globalThis.puppeteerDeleteFile(relativePath);
 }
 
-export function setViewport(width: number, height: number): Promise<void> {
-  return globalThis.puppeteerSetViewport(width, height);
+export async function getFiles(
+  ...relativePaths: Array<string>
+): Promise<FileList> {
+  let fileInput = document.createElement("input");
+  fileInput.type = "file";
+  await globalThis.puppeteerWaitForFileChooser();
+  fileInput.click();
+  await globalThis.puppeteerFileChooserAccept(...relativePaths);
+  return fileInput.files;
 }
 
-export function mockExactFile(originalUrl: string, relativePath: string): void {
-  return globalThis.puppeteerMockExactFile(originalUrl, relativePath);
-}
-
-export async function chooseFiles(
+export async function supplyFiles(
   triggerFileChooserFn: () => void,
   ...relativePaths: Array<string>
 ): Promise<void> {
   await globalThis.puppeteerWaitForFileChooser();
   triggerFileChooserFn();
   return globalThis.puppeteerFileChooserAccept(...relativePaths);
+}
+
+export function setViewport(width: number, height: number): Promise<void> {
+  return globalThis.puppeteerSetViewport(width, height);
+}
+
+export function mockExactFile(originalUrl: string, relativePath: string): void {
+  return globalThis.puppeteerMockExactFile(originalUrl, relativePath);
 }
