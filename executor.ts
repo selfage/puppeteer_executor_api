@@ -33,7 +33,9 @@ export async function execute(
   let argsStr = argv.length === 0 ? `` : `"${argv.join(`","`)}"`;
   let writeFilePromise = fs.promises.writeFile(
     tempBinFile,
-    `<html>
+    `<!DOCTYPE html>
+<html>
+  <head><meta charset="UTF-8"></head>
   <body>
     <script type="text/javascript">var ${PUPPETEER_NAMESPACE}Argv = [${argsStr}];</script>
     <script type="text/javascript" src="/${binJsFile}"></script>
