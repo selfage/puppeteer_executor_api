@@ -1,51 +1,63 @@
 import fs = require("fs");
-import { assertThat, eq } from "@selfage/test_matcher";
+import { assertThat, containStr, eq } from "@selfage/test_matcher";
 import { TEST_RUNNER } from "@selfage/test_runner";
-import { spawnSync } from "child_process";
+import { execSync } from "child_process";
 
 TEST_RUNNER.run({
   name: "MainTest",
   environment: {
     setUp: () => {
-      spawnSync("selfage", ["cpl", "main"]);
+      execSync("npx selfage cpl main");
     },
   },
   cases: [
     {
-      name: "LogsAndErrors",
+      name: "Logs",
       execute: async () => {
         // Prepare
-        spawnSync("selfage", ["cpl", "test_data/logs_and_errors"]);
+        execSync("npx selfage cpl test_data/logs");
 
         // Execute
-        let output = spawnSync("node", [
-          "main",
-          "test_data/logs_and_errors",
-          "--",
-          "-b",
-          "some args",
-        ]).stdout;
+        let output = execSync("node main test_data/logs -- -b some_args");
 
         // Verify
         assertThat(
           output.toString(),
           eq(`some string to print
--b,some args
+-b,some_args
 some printed error Error
-    at http://localhost:8000/test_data/logs_and_errors.js:4:35
+    at http://localhost:8000/test_data/logs.js:4:35
 `),
-          "output"
+          "output",
         );
+      },
+    },
+    {
+      name: "ThrowError",
+      execute: async () => {
+        // Prepare
+        execSync("npx selfage cpl test_data/throw_error");
+
+        // Execute
+        let error: Error;
+        try {
+          execSync("node main test_data/throw_error");
+        } catch (e) {
+          error = e;
+        }
+
+        // Verify
+        assertThat(error.message, containStr("This is an error"), "error message");
       },
     },
     {
       name: "Screenshot",
       execute: async () => {
         // Prepare
-        spawnSync("selfage", ["cpl", "test_data/screenshot"]);
+        execSync("npx selfage cpl test_data/screenshot");
 
         // Execute
-        spawnSync("node", ["main", "test_data/screenshot"]);
+        execSync("node main test_data/screenshot");
 
         // Verify
         assertThat(
@@ -53,9 +65,9 @@ some printed error Error
           eq(
             fs
               .readFileSync("test_data/screenshotted_image_golden.png")
-              .toString()
+              .toString(),
           ),
-          "image"
+          "image",
         );
 
         // Cleanup
@@ -66,13 +78,10 @@ some printed error Error
       name: "FileChooser",
       execute: async () => {
         // Prepare
-        spawnSync("selfage", ["cpl", "test_data/file_chooser"]);
+        execSync("npx selfage cpl test_data/file_chooser");
 
         // Execute
-        let output = spawnSync("node", [
-          "main",
-          "test_data/file_chooser",
-        ]).stdout;
+        let output = execSync("node main test_data/file_chooser");
 
         // Verify
         assertThat(output.toString(), eq(`some string here\n\n`), "text file");

@@ -2,7 +2,7 @@ import fs = require("fs");
 import http = require("http");
 import mime = require("mime-types");
 import path = require("path");
-import puppeteer = require("puppeteer");
+import puppeteer = require("puppeteer-core");
 import stream = require("stream");
 import util = require("util");
 import { Buffer } from "buffer";
@@ -23,8 +23,14 @@ export async function execute(
   baseDir = ".",
   outputToConsole = true,
   port = 8000,
-  argv: Array<string> = []
+  argv: Array<string> = [],
 ): Promise<OutputCollection> {
+  if (!process.env.CHROME) {
+    throw new Error(
+      `Requires the environment variable "CHROME" which points to your Chrome browser's exectuable path.`,
+    );
+  }
+
   let pathObj = path.parse(binFile);
   pathObj.ext = ".js";
   pathObj.base = "";
@@ -40,21 +46,24 @@ export async function execute(
     <script type="text/javascript">var ${PUPPETEER_NAMESPACE}Argv = [${argsStr}];</script>
     <script type="text/javascript" src="/${binJsFile}"></script>
   </body>
-</html>`
+</html>`,
   );
 
   let server = http.createServer();
   server.addListener(
     "request",
     (request: http.IncomingMessage, response: http.ServerResponse) =>
-      serveFile(baseDir, request, response)
+      serveFile(baseDir, request, response),
   );
   let startServerPromise = new Promise<void>((resolve) => {
     server.listen({ host: HOST_NAME, port: port }, () => resolve());
   });
   await Promise.all([writeFilePromise, startServerPromise]);
 
-  let browser = await puppeteer.launch();
+  let browser = await puppeteer.launch({
+    executablePath: process.env.CHROME,
+    headless: true,
+  });
   let page = await browser.newPage();
   page.exposeFunction(
     `${PUPPETEER_NAMESPACE}Screenshot`,
@@ -68,7 +77,7 @@ export async function execute(
         delay?: number; // ms
         fullPage?: boolean;
         quality?: number;
-      } = {}
+      } = {},
     ): Promise<void> => {
       await new Promise<void>((resolve) => {
         setTimeout(resolve, delay);
@@ -87,7 +96,7 @@ export async function execute(
         fullPage: fullPage,
         omitBackground: true,
       });
-    }
+    },
   );
   page.exposeFunction(
     `${PUPPETEER_NAMESPACE}FileExists`,
@@ -99,34 +108,34 @@ export async function execute(
       } catch (e) {
         return false;
       }
-    }
+    },
   );
   page.exposeFunction(
     `${PUPPETEER_NAMESPACE}ReadFile`,
     async (relativePath: string, encoding: BufferEncoding): Promise<string> => {
       let file = path.join(baseDir, relativePath);
       return await fs.promises.readFile(file, encoding);
-    }
+    },
   );
   page.exposeFunction(
     `${PUPPETEER_NAMESPACE}WriteFile`,
     async (relativePath: string, data: string): Promise<void> => {
       let file = path.join(baseDir, relativePath);
       return await fs.promises.writeFile(file, Buffer.from(data, "binary"));
-    }
+    },
   );
   page.exposeFunction(
     `${PUPPETEER_NAMESPACE}DeleteFile`,
     async (relativePath: string): Promise<void> => {
       let file = path.join(baseDir, relativePath);
       await fs.promises.unlink(file);
-    }
+    },
   );
   page.exposeFunction(
     `${PUPPETEER_NAMESPACE}SetViewport`,
     async (width: number, height: number): Promise<void> => {
       await page.setViewport({ width, height });
-    }
+    },
   );
   {
     await page.setRequestInterception(true);
@@ -140,11 +149,11 @@ export async function execute(
           if (request.url() === originalUrl) {
             request.continue(
               { url: `http://${HOST_NAME}:${port}${relativePath}` },
-              1
+              1,
             );
           }
         });
-      }
+      },
     );
   }
   {
@@ -156,7 +165,7 @@ export async function execute(
         await new Promise<void>((resolve) => {
           setTimeout(resolve, delayAfter);
         });
-      }
+      },
     );
     page.exposeFunction(
       `${PUPPETEER_NAMESPACE}FileChooserAccept`,
@@ -165,9 +174,9 @@ export async function execute(
         await fileChooser.accept(
           relativePaths.map((relativePath): string => {
             return path.join(baseDir, relativePath);
-          })
+          }),
         );
-      }
+      },
     );
   }
 
@@ -202,7 +211,7 @@ export async function execute(
       lastConsoleMsgPromise,
       msg,
       outputToConsole,
-      outputCollection
+      outputCollection,
     );
   });
   await page.goto(`http://${HOST_NAME}:${port}/selfage_temp_bin.html`);
@@ -222,7 +231,7 @@ export async function execute(
 async function serveFile(
   baseDir: string,
   request: http.IncomingMessage,
-  response: http.ServerResponse
+  response: http.ServerResponse,
 ): Promise<void> {
   let url = new URL(request.url, `http://${request.headers.host}`);
   let file = path.join(baseDir, url.pathname.substring(1));
@@ -248,7 +257,7 @@ async function collectConsoleMsgAfterLastMsg(
   lastCollectPromise: Promise<void>,
   msg: puppeteer.ConsoleMessage,
   outputToConsole: boolean,
-  outputCollection: OutputCollection
+  outputCollection: OutputCollection,
 ): Promise<void> {
   await lastCollectPromise;
   let text = await interpretMsg(msg);
@@ -257,7 +266,7 @@ async function collectConsoleMsgAfterLastMsg(
       console.log(text);
     }
     outputCollection.log.push(text);
-  } else if (msg.type() === "warning") {
+  } else if (msg.type() === "warn") {
     if (outputToConsole) {
       console.warn(text);
     }
@@ -285,7 +294,7 @@ async function interpretMsg(msg: puppeteer.ConsoleMessage): Promise<string> {
           }
           return `${arg}`;
         });
-      })
+      }),
     )) as Array<string>;
     return util.format(...args);
   } else {
