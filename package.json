@@ -1,6 +1,6 @@
 {
   "name": "@selfage/puppeteer_test_executor",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Execute bundled JS file with extra global functions exposed by Puppeteer",
   "repository": {
     "type": "git",
@@ -37,7 +37,6 @@
     "!test_data/**/*",
     "!**/*_test.*"
   ],
-  "chromeExectuablePath": "C:/Program Files/Google/Chrome/Application/chrome.exe",
   "devDependencies": {
     "@selfage/cli": "^5.0.0",
     "@selfage/test_matcher": "^1.2.0",
