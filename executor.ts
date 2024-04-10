@@ -198,9 +198,9 @@ export async function execute(
       resolve(2);
       await lastConsoleMsgPromise;
       if (outputToConsole) {
-        console.error(err.message);
+        console.error(err.stack);
       }
-      outputCollection.error.push(err.message);
+      outputCollection.error.push(err.stack);
     });
   });
   page.on("console", (msg) => {
