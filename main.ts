@@ -27,11 +27,11 @@ function main(): void {
     )
     .option(
       "-l, --outputToConsole",
-      "Whether to log logs in browser to console.",
+      "Whether to log logs in browser to console. Default is true.",
     )
     .option(
-      "-c, --chromeExecutablePath <path>",
-      `The exectuable path of your Chrome browser. You can download one from @puppeteer/browsers. If not provided, it will look for \`chrome\` field in ./package.json.`,
+      "-hl, --headless",
+      `Whether to run the browser in headless mode. Default is true.`,
     )
     .action(async (binFile, passThroughArgs, options) => {
       await execute(
@@ -39,6 +39,7 @@ function main(): void {
         options.baseDir as string,
         options.outputToConsole as boolean,
         options.port as number,
+        options.headless as boolean,
         passThroughArgs as Array<string>,
       );
     });

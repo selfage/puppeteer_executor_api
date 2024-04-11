@@ -23,6 +23,7 @@ export async function execute(
   baseDir = ".",
   outputToConsole = true,
   port = 8000,
+  headless = true,
   argv: Array<string> = [],
 ): Promise<OutputCollection> {
   if (!process.env.CHROME) {
@@ -62,7 +63,7 @@ export async function execute(
 
   let browser = await puppeteer.launch({
     executablePath: process.env.CHROME,
-    headless: true,
+    headless,
   });
   let page = await browser.newPage();
   page.exposeFunction(

@@ -16,15 +16,15 @@ You can use the CLI e.g. `$ npx pexe file/to/be/run/in/browser.js -b base/dir`. 
 
 ```Shell
 $ npx pexe -h
-Usage: pexe [options] <binFile> [pass-through-args...]
+Usage: main [options] <binFile> [pass-through-args...]
 
-Execute the presumably bundled JavaScript file in your Chrome browser. Requires the environment variable "CHROME" which points to your Chrome browser's exectuable path. The file ext can be neglected and is always fixed as .js.  "--" is needed in between <binFile> and pass through arguments.
+Execute the presumably bundled JavaScript file in your Chrome browser. Requires the environment variable "CHROME" which points to your Chrome browser's exectuable path. The file ext can be neglected and is always fixed as .js. "--" is needed in between <binFile> and pass through arguments.
 
 Options:
-  -b, --base-dir <baseDir>  The base directory that all loaded files/resources should be relative to, from which all static files are being served in the server. If not
-                            provided, it will be the current working directory.
+  -b, --base-dir <baseDir>  The base directory that all loaded files/resources should be relative to, from which all static files are being served in the server. If not provided, it will be the current working directory.
   -p, --port <port>         The port number to start your local server. Default to 8000.
-  -l, --outputToConsole     Whether to log logs in browser to console.
+  -l, --outputToConsole     Whether to log logs in browser to console. Default is true.
+  -hl, --headless           Whether to run the browser in headless mode. Default is true.
   -h, --help                display help for command
 ```
 
