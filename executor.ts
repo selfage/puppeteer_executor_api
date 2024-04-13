@@ -138,6 +138,78 @@ export async function execute(
       await page.setViewport({ width, height });
     },
   );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}MouseClick`,
+    async (x: number, y: number): Promise<void> => {
+      await page.mouse.click(x, y);
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}MouseMove`,
+    async (x: number, y: number, steps: number): Promise<void> => {
+      await page.mouse.move(x, y, { steps });
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}MouseDown`,
+    async (): Promise<void> => {
+      await page.mouse.down();
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}MouseUp`,
+    async (): Promise<void> => {
+      await page.mouse.up();
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}MouseWheel`,
+    async (deltaX: number, deltaY: number): Promise<void> => {
+      await page.mouse.wheel({ deltaX, deltaY });
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}TouchTap`,
+    async (x: number, y: number): Promise<void> => {
+      await page.touchscreen.tap(x, y);
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}TouchStart`,
+    async (x: number, y: number): Promise<void> => {
+      await page.touchscreen.touchStart(x, y);
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}TouchMove`,
+    async (x: number, y: number): Promise<void> => {
+      await page.touchscreen.touchMove(x, y);
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}TouchEnd`,
+    async (): Promise<void> => {
+      await page.touchscreen.touchEnd();
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}KeyboardType`,
+    async (text: string): Promise<void> => {
+      await page.keyboard.type(text);
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}KeyboardDown`,
+    async (key: puppeteer.KeyInput): Promise<void> => {
+      await page.keyboard.down(key);
+    },
+  );
+  page.exposeFunction(
+    `${PUPPETEER_NAMESPACE}KeyboardUp`,
+    async (key: puppeteer.KeyInput): Promise<void> => {
+      await page.keyboard.up(key);
+    },
+  );
   {
     await page.setRequestInterception(true);
     page.on("request", (request): void => {
