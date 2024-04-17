@@ -37,9 +37,9 @@ function main(): void {
       await execute(
         binFile as string,
         options.baseDir as string,
-        options.noLogToConsole as boolean,
+        options.logToConsole as boolean,
         options.port as number,
-        options.noHeadless as boolean,
+        options.headless as boolean,
         passThroughArgs as Array<string>,
       );
     });

@@ -21,9 +21,9 @@ export interface OutputCollection {
 export async function execute(
   binFile: string,
   baseDir = ".",
-  noLogToConsole = false,
+  logToConsole = true,
   port = 8000,
-  noHeadless = false,
+  headless = true,
   argv: Array<string> = [],
 ): Promise<OutputCollection> {
   if (!process.env.CHROME) {
@@ -31,8 +31,6 @@ export async function execute(
       `Requires the environment variable "CHROME" which points to your Chrome browser's exectuable path.`,
     );
   }
-  let outputToConsole = !noLogToConsole;
-  let headless = !noHeadless;
 
   let pathObj = path.parse(binFile);
   pathObj.ext = ".js";
@@ -272,7 +270,7 @@ export async function execute(
       exited = true;
       resolve(2);
       await lastConsoleMsgPromise;
-      if (outputToConsole) {
+      if (logToConsole) {
         console.error(err.stack);
       }
       outputCollection.error.push(err.stack);
@@ -285,7 +283,7 @@ export async function execute(
     lastConsoleMsgPromise = collectConsoleMsgAfterLastMsg(
       lastConsoleMsgPromise,
       msg,
-      outputToConsole,
+      logToConsole,
       outputCollection,
     );
   });
@@ -331,28 +329,28 @@ async function serveFile(
 async function collectConsoleMsgAfterLastMsg(
   lastCollectPromise: Promise<void>,
   msg: puppeteer.ConsoleMessage,
-  outputToConsole: boolean,
+  logToConsole: boolean,
   outputCollection: OutputCollection,
 ): Promise<void> {
   await lastCollectPromise;
   let text = await interpretMsg(msg);
   if (msg.type() === "log" || msg.type() === "info") {
-    if (outputToConsole) {
+    if (logToConsole) {
       console.log(text);
     }
     outputCollection.log.push(text);
   } else if (msg.type() === "warn") {
-    if (outputToConsole) {
+    if (logToConsole) {
       console.warn(text);
     }
     outputCollection.warn.push(text);
   } else if (msg.type() === "error") {
-    if (outputToConsole) {
+    if (logToConsole) {
       console.error(text);
     }
     outputCollection.error.push(text);
   } else {
-    if (outputToConsole) {
+    if (logToConsole) {
       console.log(`${msg.type()}: ${text}`);
     }
     outputCollection.other.push(`${msg.type()}: ${text}`);
