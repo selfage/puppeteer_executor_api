@@ -21,9 +21,9 @@ export interface OutputCollection {
 export async function execute(
   binFile: string,
   baseDir = ".",
-  outputToConsole = true,
+  noLogToConsole = false,
   port = 8000,
-  headless = true,
+  noHeadless = false,
   argv: Array<string> = [],
 ): Promise<OutputCollection> {
   if (!process.env.CHROME) {
@@ -31,6 +31,8 @@ export async function execute(
       `Requires the environment variable "CHROME" which points to your Chrome browser's exectuable path.`,
     );
   }
+  let outputToConsole = !noLogToConsole;
+  let headless = !noHeadless;
 
   let pathObj = path.parse(binFile);
   pathObj.ext = ".js";

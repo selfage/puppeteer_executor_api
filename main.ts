@@ -26,20 +26,20 @@ function main(): void {
       (value) => parseInt(value, 10),
     )
     .option(
-      "-l, --outputToConsole",
-      "Whether to log logs in browser to console. Default is true.",
+      "-nl, --no-log-to-console",
+      "Turn off logging browser logs to console.",
     )
     .option(
-      "-hl, --headless",
-      `Whether to run the browser in headless mode. Default is true.`,
+      "-nh, --no-headless",
+      `Turn off running the browser in headless mode.`,
     )
     .action(async (binFile, passThroughArgs, options) => {
       await execute(
         binFile as string,
         options.baseDir as string,
-        options.outputToConsole as boolean,
+        options.noLogToConsole as boolean,
         options.port as number,
-        options.headless as boolean,
+        options.noHeadless as boolean,
         passThroughArgs as Array<string>,
       );
     });
