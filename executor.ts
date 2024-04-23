@@ -49,7 +49,7 @@ export async function execute(
 </html>`,
   );
 
-  var serveStatic = createServeStaticFn(baseDir, {
+  let serveStatic = createServeStaticFn(baseDir, {
     index: false,
     fallthrough: false,
   });
@@ -57,7 +57,10 @@ export async function execute(
   server.addListener(
     "request",
     (request: http.IncomingMessage, response: http.ServerResponse) =>
-      serveStatic(request, response, () => {}),
+      serveStatic(request, response, () => {
+        response.writeHead(404);
+        response.end("Not found");
+      }),
   );
   let startServerPromise = new Promise<void>((resolve) => {
     server.listen({ host: HOST_NAME, port: port }, () => resolve());
