@@ -1,15 +1,14 @@
 import fs = require("fs");
 import http = require("http");
-import mime = require("mime-types");
 import path = require("path");
 import puppeteer = require("puppeteer-core");
-import stream = require("stream");
+import createServeStaticFn = require("serve-static");
 import util = require("util");
 import { Buffer } from "buffer";
-let pipeline = util.promisify(stream.pipeline);
 
 let PUPPETEER_NAMESPACE = "puppeteer";
 let HOST_NAME = "localhost";
+let TEMP_BIN_HTML_FILE = "selfage_temp_bin.html";
 
 export interface OutputCollection {
   log: Array<string>;
@@ -36,7 +35,7 @@ export async function execute(
   pathObj.ext = ".js";
   pathObj.base = "";
   let binJsFile = path.relative(baseDir, path.format(pathObj));
-  let tempBinFile = path.join(baseDir, "selfage_temp_bin.html");
+  let tempBinFile = path.join(baseDir, TEMP_BIN_HTML_FILE);
   let argsStr = argv.length === 0 ? `` : `"${argv.join(`","`)}"`;
   let writeFilePromise = fs.promises.writeFile(
     tempBinFile,
@@ -50,11 +49,15 @@ export async function execute(
 </html>`,
   );
 
+  var serveStatic = createServeStaticFn(baseDir, {
+    index: false,
+    fallthrough: false,
+  });
   let server = http.createServer();
   server.addListener(
     "request",
     (request: http.IncomingMessage, response: http.ServerResponse) =>
-      serveFile(baseDir, request, response),
+      serveStatic(request, response, () => {}),
   );
   let startServerPromise = new Promise<void>((resolve) => {
     server.listen({ host: HOST_NAME, port: port }, () => resolve());
@@ -287,7 +290,7 @@ export async function execute(
       outputCollection,
     );
   });
-  await page.goto(`http://${HOST_NAME}:${port}/selfage_temp_bin.html`);
+  await page.goto(`http://${HOST_NAME}:${port}/${TEMP_BIN_HTML_FILE}`);
 
   process.exitCode = await exitCodePromise;
   await lastConsoleMsgPromise;
@@ -299,31 +302,6 @@ export async function execute(
     fs.promises.unlink(tempBinFile),
   ]);
   return outputCollection;
-}
-
-async function serveFile(
-  baseDir: string,
-  request: http.IncomingMessage,
-  response: http.ServerResponse,
-): Promise<void> {
-  let url = new URL(request.url, `http://${request.headers.host}`);
-  let file = path.join(baseDir, url.pathname.substring(1));
-  let contentType = mime.lookup(path.extname(file));
-  if (typeof contentType === "boolean") {
-    contentType = mime.contentType("bin") as string;
-  }
-
-  try {
-    await fs.promises.stat(file);
-  } catch (e) {
-    response.writeHead(404, {
-      "Content-Type": mime.contentType("text") as string,
-    });
-    response.end("Not found");
-    return;
-  }
-  response.writeHead(200, { "Content-Type": contentType });
-  return pipeline(fs.createReadStream(file), response);
 }
 
 async function collectConsoleMsgAfterLastMsg(
