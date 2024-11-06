@@ -69,7 +69,7 @@ export async function execute(
 
   let browser = await puppeteer.launch({
     executablePath: process.env.CHROME,
-    headless,
+    headless
   });
   let page = await browser.newPage();
   page.exposeFunction(
